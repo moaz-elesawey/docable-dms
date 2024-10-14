@@ -27,12 +27,12 @@ def read_items(
         count_statement = (
             select(func.count())
             .select_from(Item)
-            .where(Item.owner_id == current_user.id)
+            .where(Item.owner_id == current_user.user_id)
         )
         count = session.exec(count_statement).one()
         statement = (
             select(Item)
-            .where(Item.owner_id == current_user.id)
+            .where(Item.owner_id == current_user.user_id)
             .offset(skip)
             .limit(limit)
         )
@@ -49,7 +49,7 @@ def read_item(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
     item = session.get(Item, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
+    if not current_user.is_superuser and (item.owner_id != current_user.user_id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     return item
 
@@ -61,7 +61,7 @@ def create_item(
     """
     Create new item.
     """
-    item = Item.model_validate(item_in, update={"owner_id": current_user.id})
+    item = Item.model_validate(item_in, update={"owner_id": current_user.user_id})
     session.add(item)
     session.commit()
     session.refresh(item)
@@ -82,7 +82,7 @@ def update_item(
     item = session.get(Item, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
+    if not current_user.is_superuser and (item.owner_id != current_user.user_id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     update_dict = item_in.model_dump(exclude_unset=True)
     item.sqlmodel_update(update_dict)
@@ -102,7 +102,7 @@ def delete_item(
     item = session.get(Item, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
+    if not current_user.is_superuser and (item.owner_id != current_user.user_id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     session.delete(item)
     session.commit()

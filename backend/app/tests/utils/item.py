@@ -8,7 +8,7 @@ from app.tests.utils.utils import random_lower_string
 
 def create_random_item(db: Session) -> Item:
     user = create_random_user(db)
-    owner_id = user.id
+    owner_id = user.user_id
     assert owner_id is not None
     title = random_lower_string()
     description = random_lower_string()
