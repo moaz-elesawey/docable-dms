@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 
 from app import services as svc
 from app.api.deps import SessionDep, get_current_active_superuser
@@ -222,7 +222,4 @@ def delete_group(*, session: SessionDep, group_id: uuid.UUID) -> Any:
             detail={"success": False, "message": "something went wrong!"},
         )
 
-    return JSONResponse(
-        status_code=status.HTTP_204_NO_CONTENT,
-        content={"success": True, "message": "group deleted successfully"},
-    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
