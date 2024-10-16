@@ -2,8 +2,14 @@ import uuid
 
 from sqlmodel import Field, SQLModel
 
+from ._mixins import _AuditableMixin
 
-class Document(SQLModel, table=True):
+
+class DocumentBase(_AuditableMixin, SQLModel):
+    pass
+
+
+class Document(DocumentBase, table=True):
     __tablename__ = "documents"
 
     document_id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
