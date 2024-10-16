@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
+from app._events import _register_sqlalchemy_event_listeners
 from app.api.main import api_router
 from app.core.config import settings
 
@@ -31,3 +32,5 @@ if settings.all_cors_origins:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+_register_sqlalchemy_event_listeners()
